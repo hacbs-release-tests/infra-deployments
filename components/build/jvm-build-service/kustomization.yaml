@@ -1,10 +1,10 @@
 resources:
 - allow-argocd-to-manage.yaml
-- https://github.com/redhat-appstudio/jvm-build-service/deploy/crds/base?ref=450287b6a4dfc837a852a5c5eba5df3aa58e71f2
-- https://github.com/redhat-appstudio/jvm-build-service/deploy/cache/base?ref=450287b6a4dfc837a852a5c5eba5df3aa58e71f2
-- https://github.com/redhat-appstudio/jvm-build-service/deploy/operator/base?ref=450287b6a4dfc837a852a5c5eba5df3aa58e71f2
-- https://raw.githubusercontent.com/redhat-appstudio/jvm-build-service/450287b6a4dfc837a852a5c5eba5df3aa58e71f2/deploy/base/run-maven-component-build-v0.1.yaml
-- https://raw.githubusercontent.com/redhat-appstudio/jvm-build-service/450287b6a4dfc837a852a5c5eba5df3aa58e71f2/deploy/base/lookup-artifact-location-v0.1.yaml
+- https://github.com/redhat-appstudio/jvm-build-service/deploy/crds/base?ref=5a02bddebcd751f13b92f6dc2e66608d7f6cfe65
+- https://github.com/redhat-appstudio/jvm-build-service/deploy/cache/base?ref=5a02bddebcd751f13b92f6dc2e66608d7f6cfe65
+- https://github.com/redhat-appstudio/jvm-build-service/deploy/operator/base?ref=5a02bddebcd751f13b92f6dc2e66608d7f6cfe65
+- https://raw.githubusercontent.com/redhat-appstudio/jvm-build-service/5a02bddebcd751f13b92f6dc2e66608d7f6cfe65/deploy/base/run-maven-component-build-v0.1.yaml
+- https://raw.githubusercontent.com/redhat-appstudio/jvm-build-service/5a02bddebcd751f13b92f6dc2e66608d7f6cfe65/deploy/base/lookup-artifact-location-v0.1.yaml
 - .tekton/
 - namespace.yaml
 - localstack.yaml
@@ -14,13 +14,13 @@ namespace: jvm-build-service
 images:
 - name: hacbs-jvm-cache
   newName: quay.io/redhat-appstudio/hacbs-jvm-cache
-  newTag: 450287b6a4dfc837a852a5c5eba5df3aa58e71f2
+  newTag: 5a02bddebcd751f13b92f6dc2e66608d7f6cfe65
 - name: quay.io/QUAY_USERNAME/hacbs-jvm-cache
   newName: quay.io/redhat-appstudio/hacbs-jvm-cache
-  newTag: 450287b6a4dfc837a852a5c5eba5df3aa58e71f2
+  newTag: 5a02bddebcd751f13b92f6dc2e66608d7f6cfe65
 - name: hacbs-jvm-operator
   newName: quay.io/redhat-appstudio/hacbs-jvm-controller
-  newTag: 450287b6a4dfc837a852a5c5eba5df3aa58e71f2
+  newTag: 5a02bddebcd751f13b92f6dc2e66608d7f6cfe65
 
 patches:
 - target:
