@@ -7,10 +7,10 @@ metadata:
 subjects:
   - kind: Group
     apiGroup: rbac.authorization.k8s.io
-    name: GitOps Service Team
+    name: konflux-gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: gitops-namespaces-read-all-access
 ---
 kind: RoleBinding
@@ -21,10 +21,10 @@ metadata:
 subjects:
   - kind: Group
     apiGroup: rbac.authorization.k8s.io
-    name: GitOps Service Team
+    name: konflux-gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: gitops-namespaces-read-all-access
 ---
 kind: RoleBinding
@@ -35,10 +35,10 @@ metadata:
 subjects:
   - kind: Group
     apiGroup: rbac.authorization.k8s.io
-    name: GitOps Service Team
+    name: konflux-gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: gitops-namespaces-delete-pods-access
 ---
 kind: RoleBinding
@@ -49,8 +49,8 @@ metadata:
 subjects:
   - kind: Group
     apiGroup: rbac.authorization.k8s.io
-    name: GitOps Service Team
+    name: konflux-gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: gitops-namespaces-delete-pods-access

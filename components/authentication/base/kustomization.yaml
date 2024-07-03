@@ -1,9 +1,28 @@
-resources:
-- everyone-can-view.yaml
-- component-maintainer.yaml
-- group-sync/
-- rhtap-admins.yaml
-- admin-checker/
-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+resources:
+- admin-checker
+- group-sync
+- component-maintainer.yaml
+- everyone-can-view.yaml
+- konflux-admins.yaml
+
+patches:
+  - path: everyone-can-view-patch.yaml
+    target:
+      name: everyone-view
+      kind: ClusterRoleBinding
+      group: rbac.authorization.k8s.io
+      version: v1
+  - path: everyone-can-view-patch.yaml
+    target:
+      name: everyone-view-appstudio
+      kind: ClusterRoleBinding
+      group: rbac.authorization.k8s.io
+      version: v1
+  - path: everyone-can-view-patch.yaml
+    target:
+      name: everyone-view-cluster-version
+      kind: ClusterRoleBinding
+      group: rbac.authorization.k8s.io
+      version: v1

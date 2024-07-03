@@ -11,22 +11,17 @@
   },
   {
     "op": "add",
-    "path": "/data/SPIINSTANCEID",
-    "value": "spi-dev"
-  },
-  {
-    "op": "add",
     "path": "/data/INSTANCEID",
     "value": "spi-dev"
   },
   {
     "op": "add",
-    "path": "/data/ENABLEREMOTESECRETS",
+    "path": "/data/VAULTINSECURETLS",
     "value": "true"
   },
   {
     "op": "add",
-    "path": "/data/VAULTINSECURETLS",
-    "value": "true"
+    "path": "/data/TOKENSTORAGE",
+    "value": "vault"
   }
 ]

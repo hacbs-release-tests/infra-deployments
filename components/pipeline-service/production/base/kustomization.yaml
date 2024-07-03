@@ -8,18 +8,38 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 
 resources:
-  - https://github.com/openshift-pipelines/pipeline-service.git/operator/gitops/argocd/pipeline-service?ref=81454e7a3c38fc1b1f145b5cb1d537417e195192
+  - https://github.com/openshift-pipelines/pipeline-service.git/operator/gitops/argocd/pipeline-service?ref=72287aca6503f631b917debc27683a508f7e45ad
   - pipelines-as-code-secret.yaml # create external secret in openshift-pipelines namespace
   - ../../base/external-secrets
   - ../../base/testing
   - ../../base/rbac
 
+images:
+  - name: quay.io/redhat-appstudio/tekton-results-api
+    newTag: bae7851ff584423503af324200f52cd28ca99116
+  - name: quay.io/redhat-appstudio/tekton-results-watcher
+    newTag: bae7851ff584423503af324200f52cd28ca99116
+
 patches:
-#  - path: scale-down-exporter.yaml
-#    target:
-#      kind: Deployment
-#      name: pipeline-metrics-exporter
-#      namespace: openshift-pipelines
+  # - path: scale-down-exporter.yaml
+  #   target:
+  #     kind: Deployment
+  #     name: pipeline-metrics-exporter
+  #     namespace: openshift-pipelines
+  - path: chains-tekton-config-patches.yaml
+    target:
+      kind: TektonConfig
+      name: config
+  - path: bump-exporter-mem.yaml
+    target:
+      kind: Deployment
+      name: pipeline-metrics-exporter
+      namespace: openshift-pipelines
+  - path: bump-results-watcher-mem.yaml
+    target:
+      kind: Deployment
+      namespace: tekton-results
+      name: tekton-results-watcher
   - path: update-tekton-config-pac.yaml
     target:
       kind: TektonConfig
@@ -28,3 +48,13 @@ patches:
     target:
       kind: TektonConfig
       name: config
+  - path: bump-results-watcher-replicas.yaml
+    target:
+      kind: Deployment
+      namespace: tekton-results
+      name: tekton-results-watcher
+  - path: bump-results-api-resources.yaml
+    target:
+      kind: Deployment
+      namespace: tekton-results
+      name: tekton-results-api

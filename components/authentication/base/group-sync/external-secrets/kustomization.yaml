@@ -1,5 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - github-redhat-appstudio-sre.yaml
-  - github-redhat-appstudio.yaml
+  - konflux-ldap-sa.yaml
+  - mtls-ca-validators.yaml

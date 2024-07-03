@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../base
+- ../../base/external-secrets
+- https://github.com/konflux-ci/integration-service/config/default?ref=4d698c316347decc9907ffaae2959780a51e8fef
+- https://github.com/konflux-ci/integration-service/config/snapshotgc?ref=4d698c316347decc9907ffaae2959780a51e8fef
+
+images:
+- name: quay.io/redhat-appstudio/integration-service
+  newName: quay.io/redhat-appstudio/integration-service
+  newTag: 4d698c316347decc9907ffaae2959780a51e8fef
+
+configMapGenerator:
+- name: integration-config
+  literals:
+    - CONSOLE_NAME="Red Hat Konflux"
+    - CONSOLE_URL="https://console.redhat.com/preview/application-pipeline/ns/{{ .Namespace }}/pipelinerun/{{ .PipelineRunName }}"
+    - CONSOLE_URL_TASKLOG="https://console.redhat.com/preview/application-pipeline/ns/{{ .Namespace }}/pipelinerun/{{ .PipelineRunName }}/logs/{{ .TaskName }}"
+- name: pipelinerun-options
+  literals:
+    - PIPELINE_TIMEOUT="3h"
+    - TASKS_TIMEOUT="2h"
+    - FINALLY_TIMEOUT="1h"
+
+namespace: integration-service
+
+patches:
+  - path: pipelines-as-code-secret.yaml
+    target:
+      name: pipelines-as-code-secret
+      kind: ExternalSecret
+      group: external-secrets.io
+      version: v1beta1
+  - path: manager_resources_patch.yaml

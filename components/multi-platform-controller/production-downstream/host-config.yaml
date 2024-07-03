@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    build.appstudio.redhat.com/multi-platform-config: hosts
+  name: host-config
+  namespace: multi-platform-controller
+data:
+
+  dynamic-platforms: linux/arm64,linux/amd64,linux-root/arm64,linux-root/amd64,linux/s390x #,linux/ppc64le
+  instance-tag: rhtap-prod
+
+  dynamic.linux-arm64.type: aws
+  dynamic.linux-arm64.region: us-east-1
+  dynamic.linux-arm64.ami: ami-03d6a5256a46c9feb
+  dynamic.linux-arm64.instance-type: m6g.large
+  dynamic.linux-arm64.key-name: konflux-prod-int-mab01
+  dynamic.linux-arm64.aws-secret: aws-account
+  dynamic.linux-arm64.ssh-secret: aws-ssh-key
+  # dynamic.linux-arm64.security-group: "multi-arch-build-sg"
+  dynamic.linux-arm64.security-group-id: sg-0903aedd465be979e
+  dynamic.linux-arm64.subnet-id: subnet-0aa719a6c5b602b16
+  dynamic.linux-arm64.max-instances: "10"
+  
+  dynamic.linux-amd64.type: aws
+  dynamic.linux-amd64.region: us-east-1
+  dynamic.linux-amd64.ami: ami-026ebd4cfe2c043b2
+  dynamic.linux-amd64.instance-type: m5.large
+  dynamic.linux-amd64.key-name: konflux-prod-int-mab01
+  dynamic.linux-amd64.aws-secret: aws-account
+  dynamic.linux-amd64.ssh-secret: aws-ssh-key
+  # dynamic.linux-amd64.security-group: "multi-arch-build-sg"
+  dynamic.linux-amd64.security-group-id: sg-0903aedd465be979e
+  dynamic.linux-amd64.subnet-id: subnet-0aa719a6c5b602b16
+  dynamic.linux-amd64.max-instances: "10"
+
+  dynamic.linux-root-arm64.type: aws
+  dynamic.linux-root-arm64.region: us-east-1
+  dynamic.linux-root-arm64.ami: ami-03d6a5256a46c9feb
+  dynamic.linux-root-arm64.instance-type: m6g.large
+  dynamic.linux-root-arm64.key-name: konflux-prod-int-mab01
+  dynamic.linux-root-arm64.aws-secret: aws-account
+  dynamic.linux-root-arm64.ssh-secret: aws-ssh-key
+  dynamic.linux-root-arm64.security-group-id: sg-0903aedd465be979e
+  dynamic.linux-root-arm64.subnet-id: subnet-0aa719a6c5b602b16
+  dynamic.linux-root-arm64.max-instances: "10"
+  dynamic.linux-root-arm64.sudo-commands: "/usr/bin/podman"
+  dynamic.linux-root-arm64.disk: "200"
+  dynamic.linux-root-arm64.iops: "16000"
+  dynamic.linux-root-arm64.throughput: "1000"
+
+  dynamic.linux-root-amd64.type: aws
+  dynamic.linux-root-amd64.region: us-east-1
+  dynamic.linux-root-amd64.ami: ami-026ebd4cfe2c043b2
+  dynamic.linux-root-amd64.instance-type: m6idn.2xlarge
+  dynamic.linux-root-amd64.key-name: konflux-prod-int-mab01
+  dynamic.linux-root-amd64.aws-secret: aws-account
+  dynamic.linux-root-amd64.ssh-secret: aws-ssh-key
+  dynamic.linux-root-amd64.security-group-id: sg-0903aedd465be979e
+  dynamic.linux-root-amd64.subnet-id: subnet-0aa719a6c5b602b16
+  dynamic.linux-root-amd64.max-instances: "10"
+  dynamic.linux-root-amd64.sudo-commands: "/usr/bin/podman"
+  dynamic.linux-root-amd64.user-data: |-
+    Content-Type: multipart/mixed; boundary="//"
+    MIME-Version: 1.0
+    
+    --//
+    Content-Type: text/cloud-config; charset="us-ascii"
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: 7bit
+    Content-Disposition: attachment; filename="cloud-config.txt"
+    
+    #cloud-config
+    cloud_final_modules:
+      - [scripts-user, always]
+    
+    --//
+    Content-Type: text/x-shellscript; charset="us-ascii"
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: 7bit
+    Content-Disposition: attachment; filename="userdata.txt"
+    
+    #!/bin/bash -ex
+    
+    if lsblk -no FSTYPE /dev/nvme1n1 | grep -qE '\S'; then
+     echo "File system exists on the disk."
+    else
+     echo "No file system found on the disk /dev/nvme1n1"
+     mkfs -t xfs /dev/nvme1n1
+    fi
+    
+    mount /dev/nvme1n1 /home
+    
+    if [ -d "/home/var-lib-containers" ]; then
+     echo "Directory '/home/var-lib-containers' exist"
+    else
+     echo "Directory '/home/var-lib-containers' doesn't exist"
+     mkdir -p /home/var-lib-containers /var/lib/containers
+    fi
+    
+    mount --bind /home/var-lib-containers /var/lib/containers
+
+    if [ -d "/home/var-tmp" ]; then
+     echo "Directory '/home/var-tmp' exist"
+    else
+     echo "Directory '/home/var-tmp' doesn't exist"
+     mkdir -p /home/var-tmp /var/tmp
+    fi
+    
+    mount --bind /home/var-tmp /var/tmp
+
+    if [ -d "/home/ec2-user" ]; then
+    echo "ec2-user home exists"
+    else
+    echo "ec2-user home doesn't exist"
+    mkdir -p /home/ec2-user/.ssh
+    chown -R ec2-user /home/ec2-user
+    fi
+    
+    sed -n 's,.*\(ssh-.*\s\),\1,p' /root/.ssh/authorized_keys > /home/ec2-user/.ssh/authorized_keys
+    chown ec2-user /home/ec2-user/.ssh/authorized_keys
+    chmod 600 /home/ec2-user/.ssh/authorized_keys
+    chmod 700 /home/ec2-user/.ssh
+    restorecon -r /home/ec2-user
+    
+    --//--
+
+  dynamic.linux-s390x.type: ibmz
+  dynamic.linux-s390x.ssh-secret: "internal-prod-ibm-ssh-key"
+  dynamic.linux-s390x.secret: "internal-prod-ibm-api-key"
+  dynamic.linux-s390x.vpc: "konflux-internal-prod-us-east-1"
+  dynamic.linux-s390x.key: "internal-prod-key"
+  dynamic.linux-s390x.subnet: "internal-a"
+  dynamic.linux-s390x.image-id: "r014-23be9e67-4ab2-4dc9-9a51-d56efb06943d"
+  dynamic.linux-s390x.region: "us-east-1"
+  dynamic.linux-s390x.url: "https://us-east.iaas.cloud.ibm.com/v1"
+  dynamic.linux-s390x.profile: "bz2-1x4"
+  dynamic.linux-s390x.max-instances: "2"
+  dynamic.linux-s390x.private-ip: "true"
+
+  # dynamic.linux-ppc64le.type: ibmp
+  # dynamic.linux-ppc64le.ssh-secret: "internal-prod-ibm-ssh-key"
+  # dynamic.linux-ppc64le.secret: "internal-prod-ibm-api-key"
+  # dynamic.linux-ppc64le.key: "prod-konflux-infra"
+  # dynamic.linux-ppc64le.image: "RHEL9-SP2"
+  # dynamic.linux-ppc64le.crn: "crn:v1:bluemix:public:power-iaas:wdc06:a/5cb0704ee6304413bd0b171372c0fd77:4e9dc638-7a78-4e7c-b432-e83b7010c531::"
+  # dynamic.linux-ppc64le.url: "https://us-east.power-iaas.cloud.ibm.com"
+  # dynamic.linux-ppc64le.network: "a6d8d6da-c412-4106-9b57-4e25541b2e7f"
+  # dynamic.linux-ppc64le.system: "e980"
+  # dynamic.linux-ppc64le.cores: "0.25"
+  # dynamic.linux-ppc64le.memory: "2"
+  # dynamic.linux-ppc64le.max-instances: "2"
+
+  host.power-rhtap-prod-1.address: "10.130.74.226"
+  host.power-rhtap-prod-1.platform: "linux/ppc64le"
+  host.power-rhtap-prod-1.user: "root"
+  host.power-rhtap-prod-1.secret: "internal-prod-ibm-ssh-key"
+  host.power-rhtap-prod-1.concurrency: "4"
+
+  host.power-rhtap-prod-2.address: "10.130.73.221"
+  host.power-rhtap-prod-2.platform: "linux/ppc64le"
+  host.power-rhtap-prod-2.user: "root"
+  host.power-rhtap-prod-2.secret: "internal-prod-ibm-ssh-key"
+  host.power-rhtap-prod-2.concurrency: "4"
+
+  host.ibm-gpu-amd64.address: "10.130.81.14"
+  host.ibm-gpu-amd64.platform: "linux-ibm-gpu/amd64"
+  host.ibm-gpu-amd64.user: "root"
+  host.ibm-gpu-amd64.secret: "internal-stage-ibm-ssh-key"
+  host.ibm-gpu-amd64.concurrency: "4"

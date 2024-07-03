@@ -48,7 +48,8 @@ spec:
           commit_hash|job|operation|tokenName|rateLimited|state|persistentvolumeclaim|\
           storageclass|volumename|release_reason|instance|result|deployment_reason|\
           validation_reason|strategy|succeeded|target|name|method|code|sp|\
-          unexpected_status|failure|hostname|label_app_kubernetes_io_managed_by|status"
+          unexpected_status|failure|hostname|label_app_kubernetes_io_managed_by|status|\
+          pipeline|pipelinename|pipelinerun|schedule|check"
 ---
 # Grant permission to Federate In-Cluster Prometheus
 apiVersion: rbac.authorization.k8s.io/v1
@@ -86,6 +87,16 @@ spec:
   endpoints:
   - params:
       'match[]': # scrape only required metrics from in-cluster prometheus
+        - '{__name__="pipeline_service_schedule_overhead_percentage_sum"}'
+        - '{__name__="pipeline_service_schedule_overhead_percentage_count"}'
+        - '{__name__="pipeline_service_execution_overhead_percentage_sum"}'
+        - '{__name__="pipeline_service_execution_overhead_percentage_count"}'
+        - '{__name__="pipelinerun_duration_scheduled_seconds_sum"}'
+        - '{__name__="pipelinerun_duration_scheduled_seconds_count"}'
+        - '{__name__="pipelinerun_gap_between_taskruns_milliseconds_sum"}'
+        - '{__name__="pipelinerun_gap_between_taskruns_milliseconds_count"}'
+        - '{__name__="tekton_pipelines_controller_pipelinerun_duration_seconds_sum"}'
+        - '{__name__="tekton_pipelines_controller_pipelinerun_duration_seconds_count"}'
         - '{__name__="controller_runtime_reconcile_errors_total", namespace!~".*-tenant|openshift-.*|kube-.*"}'
         - '{__name__="controller_runtime_reconcile_total", namespace!~".*-tenant|openshift-.*|kube-.*"}'
         - '{__name__="kube_pod_status_unschedulable", namespace!~".*-tenant|openshift-.*|kube-.*"}'
@@ -93,6 +104,14 @@ spec:
         - '{__name__="kube_pod_status_phase", namespace!~".*-tenant|openshift-.*|kube-.*"}'
         - '{__name__="kube_persistentvolume_status_phase", namespace!~".*-tenant|openshift-.*|kube-.*"}'
         - '{__name__="kube_resourcequota", namespace!~".*-tenant|openshift-.*|kube-.*"}'
+        - '{__name__="kube_statefulset_status_replicas_ready", namespace="gitops-service-argocd"}'
+        - '{__name__="kube_statefulset_replicas", namespace="gitops-service-argocd"}'
+        - '{__name__="openshift_route_status", namespace="gitops-service-argocd"}'
+        - '{__name__="kube_deployment_status_replicas_ready", namespace="gitops-service-argocd"}'
+        - '{__name__="kube_deployment_spec_replicas", namespace=~"gitops-service-argocd|smee.*"}'
+        - '{__name__="kube_deployment_status_replicas_available", namespace=~"smee.*"}'
+        - '{__name__="argocd_app_reconcile_bucket", namespace="gitops-service-argocd"}'
+        - '{__name__="argocd_app_info", namespace="gitops-service-argocd"}'
     relabelings:
     # override the target's address by the prometheus-k8s service name.
     - action: replace

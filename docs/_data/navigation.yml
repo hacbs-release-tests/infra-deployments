@@ -51,9 +51,13 @@ docs-en:
         url: /components/monitoring/prometheus/README.html
       - title: Grafana
         url: /components/monitoring/grafana/README.html
+      - title: UI
+        url: /components/ui/README.html
   - title: Misc
     children:
       - title: Quality Dashboard
         url: /docs/misc/quality-dashboard.html
+      - title: CI Helper App
+        url: /docs/misc/ci-helper-app.html
       - title: FAQs/Troubleshooting
         url: /docs/misc/faq.html

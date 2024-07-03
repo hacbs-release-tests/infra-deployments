@@ -1,15 +1,10 @@
 resources:
-- https://github.com/redhat-appstudio/quality-dashboard/frontend/deploy/base?ref=e6ba5d09f498ecbec82596eead2a3589f770865b
+- https://github.com/redhat-appstudio/quality-dashboard/frontend/deploy/base?ref=0909a2826e9d66cdf42b35ef8069f8ce1216859a
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-configMapGenerator:
-- name: quality-dashboard-configmap
-  literals:
-  - BACKEND_ROUTE=https://quality-backend-route-quality-dashboard.apps.stone-stg-rh01.l2vh.p1.openshiftapps.com
-
 images:
   - name: quay.io/redhat-appstudio/quality-dashboard-frontend
     newName: quay.io/redhat-appstudio/quality-dashboard-frontend
-    newTag: e6ba5d09f498ecbec82596eead2a3589f770865b
+    newTag: 0909a2826e9d66cdf42b35ef8069f8ce1216859a
